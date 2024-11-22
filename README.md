@@ -12,7 +12,7 @@ Esta aplicação fará o cadastro de vingadores, com nome, nome real, poderes, f
 4. Selecione a instalação do Python que deseja utilizar;
 5. Aguarde a criação do ambiente virtual.
 
-**2º passo**: Para conectar nossa aplicação com o banco de dados, utilizaremos o MySQL. Para isso, precisamos instalar o pacote `mysql-connector-python`:
+**2º passo**: Para conectar nossa aplicação com o banco de dados, utilizaremos o MySQL. Para isso, precisamos instalar uma dependência, o pacote `mysql-connector-python`:
 
 ```bash
 pip install mysql-connector-python
