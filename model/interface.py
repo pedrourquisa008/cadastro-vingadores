@@ -99,9 +99,27 @@ class Interface:
 
     def convocar_vingador(self):
         nome_heroi = capwords(input("Nome do herói: "))
+        
         for vingador in Vingador.lista_vingadores:
             if nome_heroi in vingador.nome_heroi or nome_heroi in vingador.nome_real:
+               
+                motivo = capwords(input("Escreva o motivo: "))
+                status = capwords(input("Status: "))
+                try:
+                    db = Database()
+                    db.connect()
+
+                    query = 'INSERT INTO heroi(nome_heroi, nome_real, categoria, poderes, poder_principal, fraquezas, nivel_forca) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+                   
+                except Exception as e:
+                    print(f"Erro ao salvar vingador no banco de dados: {e}")
+                finally:
+                    db.disconnect()
+
+            
                 print(vingador.convocar())
+
+
                 self.aguardar_enter()
                 return
         print(f"Vingador(a) '{nome_heroi}' não encontrado.")
