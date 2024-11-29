@@ -5,6 +5,11 @@ from model.database import Database
 
 class Interface:
 
+    def __init__(self):
+        Vingador.carregar_herois()
+        self.menu_principal()
+
+
     def menu_principal(self):
         self.exibe_titulo_app()
         while True:
@@ -71,7 +76,7 @@ class Interface:
         fraquezas = input("Fraquezas: (separadas por vírgula): ").split(',')
         nivel_forca = int(input("Nível de Força: "))
 
-        Vingador(nome_heroi, nome_real, categoria, poderes, poder_principal, fraquezas, nivel_forca)
+        
 
         #salva o vingador no banco de dados
         try:
@@ -79,11 +84,12 @@ class Interface:
             db.connect()
 
             query = 'INSERT INTO heroi(nome_heroi, nome_real, categoria, poderes, poder_principal, fraquezas, nivel_forca) VALUES (%s, %s, %s, %s, %s, %s, %s)'
-
-
             values = (nome_heroi,nome_real, categoria, ','.join(poderes), poder_principal,','.join(fraquezas), nivel_forca)
 
-            db.execute_query(query, values)
+
+
+            ponteiro = db.execute_query(query, values)
+            Vingador(ponteiro.lastrowid, nome_heroi, nome_real, categoria, poderes, poder_principal, fraquezas, nivel_forca)
         except Exception as e:
             print(f"Erro ao salvar vingador no banco de dados: {e}")
         finally:
@@ -101,35 +107,72 @@ class Interface:
         nome_heroi = capwords(input("Nome do herói: "))
         
         for vingador in Vingador.lista_vingadores:
-            if nome_heroi in vingador.nome_heroi or nome_heroi in vingador.nome_real:
-               
-                motivo = capwords(input("Escreva o motivo: "))
-                status = capwords(input("Status: "))
+            if nome_heroi in vingador.nome_heroi:
                 try:
+                    motivo = capwords(input("Escreva o motivo: "))
+                    status = capwords(input("Status: "))
+                    opcoes_validas=["Pendente, Compareceu, Ausente"]
+
+                    if status not in opcoes_validas:
+                        print(f'Opção "{status}" Invalida. Opções válidas {','.join(opcoes_validas)}.\n Faça convocação novamente ')
+                        self.aguardar_enter()
+                        return None
+
+                        
+
                     db = Database()
                     db.connect()
 
-                    query = 'INSERT INTO heroi(nome_heroi, nome_real, categoria, poderes, poder_principal, fraquezas, nivel_forca) VALUES (%s, %s, %s, %s, %s, %s, %s)'
-                   
+                    query = 'INSERT INTO convocacao(nome_heroi, motivo, status) VALUES (%s, %s, %s)'
+                    values = (nome_heroi, motivo, status)
+                    db.execute_query(query, values)
+
                 except Exception as e:
                     print(f"Erro ao salvar vingador no banco de dados: {e}")
                 finally:
                     db.disconnect()
 
             
-                print(vingador.convocar())
+                print(Vingador.convocar())
 
 
                 self.aguardar_enter()
                 return
-        print(f"Vingador(a) '{nome_heroi}' não encontrado.")
+                print(f"Vingador(a) '{nome_heroi}' não encontrado.")
         self.aguardar_enter()
 
     def aplicar_tornozeleira(self):
         nome_heroi = capwords(input("Nome do herói: "))
+
+
         for vingador in Vingador.lista_vingadores:
             if nome_heroi in vingador.nome_heroi or nome_heroi in vingador.nome_real:
-                print(vingador.aplicar_tornozeleira())
+                try:
+                    status = capwords(input("Status: "))
+                    opcoes_validas= ['Ativo', 'Inativo']
+
+                    if status not in opcoes_validas:
+                        print(f'Opção "{status}" Invalida. Opções válidas {','.join(opcoes_validas)}.\n Faça convocação novamente ')
+                        self.aguardar_enter()
+                        return None
+    
+
+                    db = Database()
+                    db.connect()
+
+                    query = 'INSERT INTO tornozeleira(status) VALUES (%s)'
+                    values = (status)
+                    db.execute_query(query, values)
+
+                except Exception as e:
+                    print(f"Erro ao salvar vingador no banco de dados: {e}")
+                finally:
+                    db.disconnect()
+
+
+
+
+                
                 self.aguardar_enter()
                 return
         print(f"Vingador(a) '{nome_heroi}' não encontrado.")
