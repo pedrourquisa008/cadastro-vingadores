@@ -1,8 +1,23 @@
-from model.interface import Interface
+from flask import Flask, render_template 
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return render_template("home.html")
+
+@app.route("/ola")
+def hello_word():
+    return "<p>Olá, mundo!</p>"
 
 
-def main():
-    Interface()
 
-if __name__ == '__main__':
-    main()
+
+# from model.interface import Interface
+
+
+# def main():
+#     Interface()
+
+# if __name__ == '__main__':
+#     main()
